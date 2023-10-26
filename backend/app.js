@@ -1,20 +1,29 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 require('./config/mongoose');
 require('dotenv').config();
+const cors = require('cors');
 
-var usersRouter = require('./routes/post');
+const usersRouter = require('./routes/post');
 
-var app = express();
+let app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_SIDE_URL,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  })
+);
 
 app.use('/', usersRouter);
 
